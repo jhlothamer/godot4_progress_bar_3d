@@ -1,6 +1,5 @@
-[gd_scene load_steps=10 format=3 uid="uid://r8ph1bmqpfcp"]
+[gd_scene load_steps=12 format=3 uid="uid://r8ph1bmqpfcp"]
 
-[ext_resource type="Shader" path="res://addons/progress_bar_3d/progress_bar_3d.gdshader" id="1_p15bj"]
 [ext_resource type="Script" path="res://addons/progress_bar_3d/progress_bar_3d.gd" id="2_nso13"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_71102"]
@@ -16,22 +15,72 @@ sky = SubResource("Sky_gkdh2")
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_tp5ev"]
-render_priority = 0
-shader = ExtResource("1_p15bj")
-shader_parameter/background_color = Color(0, 0, 0, 1)
-shader_parameter/progress_color = Color(0, 1, 0, 1)
-shader_parameter/progress_value = 0.5
-
-[sub_resource type="QuadMesh" id="QuadMesh_dn5la"]
-material = SubResource("ShaderMaterial_tp5ev")
-size = Vector2(1, 0.1)
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ewy2r"]
 albedo_color = Color(0, 0.0313726, 1, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_c4whl"]
 material = SubResource("StandardMaterial3D_ewy2r")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ef2o6"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_h10jp"]
+material = SubResource("StandardMaterial3D_ef2o6")
+size = Vector3(10, 0.2, 10)
+
+[sub_resource type="Shader" id="Shader_4fffh"]
+code = "shader_type spatial;
+
+
+// WARNING:
+// if the following render_mode line is removed or altered
+// the script progress_bar_3d.gd will no longer be able to
+// update the shader in memory to turn these off.  See
+// function progress_bar_3d.gd:_update_shader()
+render_mode unshaded, shadows_disabled, depth_test_disabled;
+
+
+uniform vec4 background_color : source_color = vec4(.0,.0,.0,1.);
+uniform vec4 progress_color : source_color = vec4(.0,1.,.0,1.);
+uniform float progress_value : hint_range(0.0, 1.0, 0.01) = .5;
+uniform int billboard_mode = 1;
+
+
+void vertex() {
+	//enabled
+	if(billboard_mode == 1) {
+		MODELVIEW_MATRIX = VIEW_MATRIX * mat4(INV_VIEW_MATRIX[0], INV_VIEW_MATRIX[1], INV_VIEW_MATRIX[2], MODEL_MATRIX[3]);
+		MODELVIEW_NORMAL_MATRIX = mat3(MODELVIEW_MATRIX);
+	//fixed y
+	} else if(billboard_mode == 2) {
+		MODELVIEW_MATRIX = VIEW_MATRIX * mat4(vec4(normalize(cross(vec3(0.0, 1.0, 0.0), INV_VIEW_MATRIX[2].xyz)), 0.0), vec4(0.0, 1.0, 0.0, 0.0), vec4(normalize(cross(INV_VIEW_MATRIX[0].xyz, vec3(0.0, 1.0, 0.0))), 0.0), MODEL_MATRIX[3]);
+		MODELVIEW_NORMAL_MATRIX = mat3(MODELVIEW_MATRIX);
+	}
+}
+
+
+void fragment() {
+	vec2 border = vec2(0.01, 0.1);
+
+	vec2 mask2 = step(border, UV) * step(UV, 1.0-border);
+    float mask = mask2.x*mask2.y;
+
+    float blend = ((UV.x - progress_value) <= 0.0 ? 1.0 : 0.0) * mask;
+    vec4 fragColor = progress_color*blend + background_color*(1.0-blend);
+	ALBEDO = fragColor.rgb;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n5tnu"]
+render_priority = 0
+shader = SubResource("Shader_4fffh")
+shader_parameter/background_color = Color(0, 0, 0, 1)
+shader_parameter/progress_color = Color(0, 1, 0, 1)
+shader_parameter/progress_value = 0.5
+shader_parameter/billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_qutsu"]
+material = SubResource("ShaderMaterial_n5tnu")
+size = Vector2(1, 0.1)
 
 [node name="Demo" type="Node3D"]
 
@@ -42,13 +91,22 @@ environment = SubResource("Environment_qtnjk")
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
 shadow_enabled = true
 
-[node name="ProgressBar3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.576697, 0)
-mesh = SubResource("QuadMesh_dn5la")
-script = ExtResource("2_nso13")
-
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_c4whl")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.969055, 0.246847, 0, -0.246847, 0.969055, 0, 0.458208, 1.28858)
+
+[node name="SunBlockingMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.93177, 0)
+mesh = SubResource("BoxMesh_h10jp")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_right = 540.0
+offset_bottom = 27.0
+value = 50.0
+
+[node name="ProgressBar3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 0, 0.703684, 0)
+mesh = SubResource("QuadMesh_qutsu")
+script = ExtResource("2_nso13")

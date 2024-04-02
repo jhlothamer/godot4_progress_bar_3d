@@ -17,3 +17,7 @@ config/icon="res://icon.svg"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/progress_bar_3d/plugin.cfg")
+
+[filesystem]
+
+import/blender/enabled=false
