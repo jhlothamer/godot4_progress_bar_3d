@@ -1,0 +1,54 @@
+[gd_scene load_steps=10 format=3 uid="uid://r8ph1bmqpfcp"]
+
+[ext_resource type="Shader" path="res://addons/progress_bar_3d/progress_bar_3d.gdshader" id="1_p15bj"]
+[ext_resource type="Script" path="res://addons/progress_bar_3d/progress_bar_3d.gd" id="2_nso13"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_71102"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_gkdh2"]
+sky_material = SubResource("ProceduralSkyMaterial_71102")
+
+[sub_resource type="Environment" id="Environment_qtnjk"]
+background_mode = 2
+sky = SubResource("Sky_gkdh2")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tp5ev"]
+render_priority = 0
+shader = ExtResource("1_p15bj")
+shader_parameter/background_color = Color(0, 0, 0, 1)
+shader_parameter/progress_color = Color(0, 1, 0, 1)
+shader_parameter/progress_value = 0.5
+
+[sub_resource type="QuadMesh" id="QuadMesh_dn5la"]
+material = SubResource("ShaderMaterial_tp5ev")
+size = Vector2(1, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ewy2r"]
+albedo_color = Color(0, 0.0313726, 1, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_c4whl"]
+material = SubResource("StandardMaterial3D_ewy2r")
+
+[node name="Demo" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_qtnjk")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="ProgressBar3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.576697, 0)
+mesh = SubResource("QuadMesh_dn5la")
+script = ExtResource("2_nso13")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_c4whl")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.969055, 0.246847, 0, -0.246847, 0.969055, 0, 0.458208, 1.28858)
