@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="Godot 4 Progress Bar 3d"
+run/main_scene="res://addons/progress_bar_3d/progress_bar_3d_demo.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://asset_lib_icon.png"
+
+[debug]
+
+gdscript/warnings/exclude_addons=false
 
 [editor_plugins]
 

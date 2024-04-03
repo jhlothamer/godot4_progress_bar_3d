@@ -45,7 +45,7 @@ Sets the quad mesh to face the camera (enabled), face camera but remain upright 
 
 
 ## Support
-If you would like to support my development work to maintain this and other such projects you can do so at https://www.buymeacoffee.com/jlothamer (see link under <strong>Sponsor this project</strong>).
+If you would like to support my development work to maintain this and other such projects you can do so at https://www.buymeacoffee.com/jlothamer.
 <br>
 
 <p align="center">

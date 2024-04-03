@@ -27,7 +27,7 @@ material = SubResource("StandardMaterial3D_ewy2r")
 material = SubResource("StandardMaterial3D_ef2o6")
 size = Vector3(10, 0.2, 10)
 
-[sub_resource type="Shader" id="Shader_4fffh"]
+[sub_resource type="Shader" id="Shader_o330c"]
 code = "shader_type spatial;
 
 
@@ -70,16 +70,16 @@ void fragment() {
 }
 "
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_n5tnu"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yyg3y"]
 render_priority = 0
-shader = SubResource("Shader_4fffh")
+shader = SubResource("Shader_o330c")
 shader_parameter/background_color = Color(0, 0, 0, 1)
 shader_parameter/progress_color = Color(0, 1, 0, 1)
 shader_parameter/progress_value = 0.5
 shader_parameter/billboard_mode = 1
 
 [sub_resource type="QuadMesh" id="QuadMesh_qutsu"]
-material = SubResource("ShaderMaterial_n5tnu")
+material = SubResource("ShaderMaterial_yyg3y")
 size = Vector2(1, 0.1)
 
 [node name="Demo" type="Node3D"]
