@@ -27,7 +27,7 @@ material = SubResource("StandardMaterial3D_ewy2r")
 material = SubResource("StandardMaterial3D_ef2o6")
 size = Vector3(10, 0.2, 10)
 
-[sub_resource type="Shader" id="Shader_o330c"]
+[sub_resource type="Shader" id="Shader_kiwxb"]
 code = "shader_type spatial;
 
 
@@ -70,16 +70,16 @@ void fragment() {
 }
 "
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_yyg3y"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mkr5g"]
 render_priority = 0
-shader = SubResource("Shader_o330c")
+shader = SubResource("Shader_kiwxb")
 shader_parameter/background_color = Color(0, 0, 0, 1)
 shader_parameter/progress_color = Color(0, 1, 0, 1)
 shader_parameter/progress_value = 0.5
 shader_parameter/billboard_mode = 1
 
 [sub_resource type="QuadMesh" id="QuadMesh_qutsu"]
-material = SubResource("ShaderMaterial_yyg3y")
+material = SubResource("ShaderMaterial_mkr5g")
 size = Vector2(1, 0.1)
 
 [node name="Demo" type="Node3D"]
@@ -100,11 +100,6 @@ transform = Transform3D(1, 0, 0, 0, 0.969055, 0.246847, 0, -0.246847, 0.969055, 
 [node name="SunBlockingMesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.93177, 0)
 mesh = SubResource("BoxMesh_h10jp")
-
-[node name="ProgressBar" type="ProgressBar" parent="."]
-offset_right = 540.0
-offset_bottom = 27.0
-value = 50.0
 
 [node name="ProgressBar3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 0, 0.703684, 0)
