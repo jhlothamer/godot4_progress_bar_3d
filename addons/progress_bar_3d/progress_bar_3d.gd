@@ -117,6 +117,7 @@ func _enter_tree() -> void:
 		mesh.size = Vector2(1.0, .1)
 		var mat := ShaderMaterial.new()
 		mesh.material = mat
+		mesh.resource_local_to_scene = true
 		var shader: Shader = load("res://addons/progress_bar_3d/progress_bar_3d.gdshader").duplicate()
 		mat.shader = shader
 	else:
