@@ -110,16 +110,14 @@ func _update_shader() -> void:
 	mat.shader = shader
 
 
-# create mesh if needed and duplicate shader on entering the node tree
+# create mesh duplicate shader on entering the node tree
 func _enter_tree() -> void:
-	if !mesh:
-		mesh = QuadMesh.new()
-		mesh.size = Vector2(1.0, .1)
-		var mat := ShaderMaterial.new()
-		mesh.material = mat
-		mesh.resource_local_to_scene = true
-		var shader: Shader = load("res://addons/progress_bar_3d/progress_bar_3d.gdshader").duplicate()
-		mat.shader = shader
-	else:
-		mesh.material = mesh.material.duplicate(true)
+	mesh = QuadMesh.new()
+	mesh.size = size
+	var mat := ShaderMaterial.new()
+	mesh.material = mat
+	mesh.resource_local_to_scene = true
+	var shader: Shader = load("res://addons/progress_bar_3d/progress_bar_3d.gdshader").duplicate()
+	mat.shader = shader
+	_update_shader_parameters()
 
