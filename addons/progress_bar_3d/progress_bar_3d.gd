@@ -5,6 +5,10 @@ extends MeshInstance3D
 ## A progress bar in 3D.  Implemented using a single quad mesh and a shader (no vieports).
 
 
+const _SHADER_FILE_OPTIONS := "res://addons/progress_bar_3d/progress_bar_3d%%OPTIONS%%.gdshader"
+const _SHADER_FILE_BASE := "res://addons/progress_bar_3d/progress_bar_3d_unshaded_no_shadows_no_depth_test.gdshader"
+
+
 ## Emitted when value has been changed.
 signal value_changed(new_value)
 
@@ -86,12 +90,18 @@ func _update_shader_parameters() -> void:
 	mat.set_shader_parameter("background_color", background_color)
 	mat.set_shader_parameter("billboard_mode", billboard_mode)
 
+## gets path to shader file - name based on certain options
+func _get_shader_file_path() -> String:
+	var options := ""
+	if unshaded: options += "_unshaded"
+	if shadows_disabled: options += "_no_shadows"
+	if depth_test_disabled: options += "_no_depth_test"
+	return _SHADER_FILE_OPTIONS.replace("%%OPTIONS%%", options)
 
-# replace the render_mode line in the progress_bar_3d.gdshader
-func _update_shader() -> void:
-	var mat:ShaderMaterial = mesh.material
-	mesh.material = mat
-	var shader: Shader = load("res://addons/progress_bar_3d/progress_bar_3d.gdshader").duplicate()
+
+# creates new shader resource from a base shader resource and saves disk
+func _create_new_shader_resource_file(shader_file_path: String) -> void:
+	var shader: Shader = load(_SHADER_FILE_BASE).duplicate()
 	var code:String = shader.code
 	var render_mode := ""
 	if unshaded:
@@ -107,17 +117,34 @@ func _update_shader() -> void:
 	if !render_mode.is_empty():
 		render_mode = "render_mode %s;" % render_mode
 	shader.code = code.replace("render_mode unshaded, shadows_disabled, depth_test_disabled;", render_mode)
+	ResourceSaver.save(shader, shader_file_path)
+
+
+# uses base or generated progress bar shaders that matches selected options
+func _update_shader() -> void:
+	var shader_file_path := _get_shader_file_path()
+	var shader: Shader
+	if !ResourceLoader.exists(shader_file_path):
+		_create_new_shader_resource_file(shader_file_path)
+	shader = load(shader_file_path)
+	var mat:ShaderMaterial = mesh.material
 	mat.shader = shader
 
 
-# create mesh duplicate shader on entering the node tree
+## create mesh duplicate shader on entering the node tree for first time
 func _enter_tree() -> void:
-	mesh = QuadMesh.new()
-	mesh.size = size
-	var mat := ShaderMaterial.new()
-	mesh.material = mat
-	mesh.resource_local_to_scene = true
-	var shader: Shader = load("res://addons/progress_bar_3d/progress_bar_3d.gdshader").duplicate()
-	mat.shader = shader
-	_update_shader_parameters()
+	if not Engine.is_editor_hint(): return
+	if not mesh:
+		mesh = QuadMesh.new()
+		mesh.size = size
+		mesh.resource_local_to_scene = true
+	if not mesh.material:
+		var mat := ShaderMaterial.new()
+		mat.resource_local_to_scene = true
+		mesh.material = mat
+		var shader: Shader = load(_SHADER_FILE_BASE)
+		mat.shader = shader
 
+
+func _ready() -> void:
+	_update_shader_parameters()

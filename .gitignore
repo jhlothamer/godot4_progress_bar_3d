@@ -1,2 +1,5 @@
 # Godot 4+ specific ignores
 .godot/
+# only include the shader we want to actually ship
+addons/progress_bar_3d/*.gdshader
+!addons/progress_bar_3d/progress_bar_3d_unshaded_no_shadows_no_depth_test.gdshader

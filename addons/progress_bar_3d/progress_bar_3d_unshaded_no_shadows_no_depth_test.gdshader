@@ -4,8 +4,8 @@ shader_type spatial;
 // WARNING:
 // if the following render_mode line is removed or altered
 // the script progress_bar_3d.gd will no longer be able to
-// update the shader in memory to turn these off.  See
-// function progress_bar_3d.gd:_update_shader()
+// create new versions of this shader.  See function
+// progress_bar_3d.gd:_update_shader()
 render_mode unshaded, shadows_disabled, depth_test_disabled;
 
 
