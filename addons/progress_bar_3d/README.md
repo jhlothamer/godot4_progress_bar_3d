@@ -31,18 +31,24 @@ Background color.
 ### Progress Color
 Fill color.
 
-### Unshaded
+### Unshaded*
 Turns on, off shading of quad mesh.
 
-### Shadows Disabled
+### Shadows Disabled*
 Turns on, off shadows of quad mesh.
 
-### Depth Test Disabled
+### Depth Test Disabled*
 Turns on, off depth test of quad mesh.
 
 ### Billboard Mode
 Sets the quad mesh to face the camera (enabled), face camera but remain upright (fixed y) or disabled.
 
+## *Implementation Note
+This addon comes with a shader that has the following render modes set: unshaded, shadows_diabled, depth_test_disabled.
+
+Whenever one of the corresponding properties to these render modes is toggled off, the default shader file is duplicated and this duplicate is modified.  This means that you'll see new shader resource files appear in the addon folder that weren't there at install time.  This process also requires that the render_mode line in the shipped shader is left exactly as is or this process will not work.
+
+The reason new shader files are generated is so that the shaders are compiled once.  If they are stored as embedded resources in the scene file, as was done previously for this addon, each instance will cause a shader compile though the shader code is actually the same.
 
 ## Support
 If you would like to support my development work to maintain this and other such projects you can do so at https://www.buymeacoffee.com/jlothamer.
